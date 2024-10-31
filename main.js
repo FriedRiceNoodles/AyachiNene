@@ -1,6 +1,7 @@
 import { WechatyBuilder } from "wechaty";
 import { FileBox } from "file-box";
 import axios from "axios";
+import leetcodeDaily from "./leetcodeDaily.js";
 
 // EPIC喜加一API
 const EPIC_FREE_API =
@@ -62,6 +63,18 @@ async function main() {
 
           message.say(`----今日Epic喜加一----\n${result.join("\n")}`);
         });
+      }
+
+      if (message.text().includes("每日一题") || message.text().includes("力扣")) {
+        const leetcodePromise = await leetcodeDaily;
+        const question = leetcodePromise.data.data.todayRecord[0].question;
+
+        const title = question.titleCn || question.title;
+        const difficulty = question.difficulty;
+        const acRate = question.acRate;
+        const url = `https://leetcode-cn.com/problems/${question.titleSlug}`;
+
+        message.say(`今日力扣每日一题：\n${title}\n难度：${difficulty}\n通过率：${acRate * 100}%\n${url}`);
       }
 
       if (message.text().includes("老婆")) {
