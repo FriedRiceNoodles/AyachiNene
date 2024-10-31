@@ -2,6 +2,10 @@ import { WechatyBuilder } from "wechaty";
 import { FileBox } from "file-box";
 import axios from "axios";
 
+// EPIC喜加一API
+const EPIC_FREE_API =
+  "https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions?locale=zh-CN&country=CN&allowCountries=CN";
+
 // 摸鱼API
 const MOYU_API = "https://api.vvhan.com/api/moyu?type=json";
 
@@ -45,6 +49,19 @@ async function main() {
           console.error("获取图片失败:", error);
           await message.say("接口挂了o(╥﹏╥)o");
         }
+      }
+
+      if (message.text().includes("喜加一")) {
+        axios.get(EPIC_FREE_API).then((response) => {
+          const freeGames = response.data.data.Catalog.searchStore.elements;
+          const result = freeGames.map(
+            (game, index) => `
+          ${index + 1}. ${game.title}\n${game.description}\n
+          `
+          );
+
+          message.say(`----今日Epic喜加一----\n${result.join("\n")}`);
+        });
       }
 
       if (message.text().includes("老婆")) {
