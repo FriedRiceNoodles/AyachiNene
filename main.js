@@ -2,6 +2,7 @@ import { WechatyBuilder } from "wechaty";
 import { FileBox } from "file-box";
 import axios from "axios";
 import leetcodeDaily from "./leetcodeDaily.js";
+import crazyThursday from "./crazyThursday.js";
 
 // EPIC喜加一API
 const EPIC_FREE_API =
@@ -50,6 +51,14 @@ async function main() {
           console.error("获取图片失败:", error);
           await message.say("接口挂了o(╥﹏╥)o");
         }
+      }
+
+      if (message.text().includes("星期四")) {
+        const posts = crazyThursday.posts;
+
+        // 随机发一条
+        const randomIndex = Math.floor(Math.random() * posts.length);
+        message.say(posts[randomIndex]);
       }
 
       if (message.text().includes("喜加一")) {
