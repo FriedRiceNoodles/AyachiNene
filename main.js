@@ -254,6 +254,10 @@ const triggers = [
           type: "image",
           value: "https://s2.loli.net/2024/11/02/uLJUkeHtSRcF4rN.gif",
         },
+        {
+          type: "image",
+          value: "https://smms.app/image/4yhbJUIkeaG5BMr",
+        }
       ];
 
       // 随机回复
