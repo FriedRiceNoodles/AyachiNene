@@ -256,7 +256,7 @@ const triggers = [
         },
         {
           type: "image",
-          value: "https://smms.app/image/4yhbJUIkeaG5BMr",
+          value: "https://s2.loli.net/2024/11/02/4yhbJUIkeaG5BMr.jpg",
         }
       ];
 
