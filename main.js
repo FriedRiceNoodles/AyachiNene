@@ -4,6 +4,10 @@ import axios from "axios";
 import leetcodeDaily from "./leetcodeDaily.js";
 import crazyThursday from "./crazyThursday.js";
 import qrcodeTerminal from "qrcode-terminal";
+import xml2js from "xml2js";
+
+// Ani字幕组RSS
+const ANI_RSS = "https://share.dmhy.org/topics/rss/user_id/747291/rss/rss.xml";
 
 // 美国总统选举结果API
 const ELECTION_API = "https://static.files.bbci.co.uk/elections/data/news/election/2024/us/banner";
@@ -40,40 +44,73 @@ const triggers = [
     },
   },
   {
-    keywords: ["选举", "总统"],
+    keywords: ["re0", "从零"],
     response: async (message) => {
-      const electionData = await axios.get(ELECTION_API);
+      try {
+        const rssData = await axios.get(ANI_RSS);
+        const parser = new xml2js.Parser();
+        parser.parseString(rssData.data, (err, result) => {
+          if (err) {
+            console.error("解析RSS失败:", err);
+            return;
+          }
 
-      const electionResult = electionData.data.banners[0].scoreboard;
+          const items = result.rss.channel[0].item;
+          const re0Items = items.filter((item) => item.title[0].includes("從零開始的異世界生活"));
 
-      // 哈里斯
-      const harris = electionResult.countSummaries.find((candidate) => candidate.party.code === "DEM");
-      // 特朗普
-      const trump = electionResult.countSummaries.find((candidate) => candidate.party.code === "REP");
+          const title = re0Items[0].title[0];
+          // 磁力链接
+          const magnet = re0Items[0].enclosure[0].$.url;
 
-      const result = `
-      美国总统大选实时数据
-        -------------------
-          哈里斯：
-            得票数：${harris.dataFormatted.count.value}
-            得票率：${harris.dataFormatted.share.value}%
-            普票数：${harris.dataFormatted.votes.value}
-            普票得票率：${harris.dataFormatted.popularVoteShare.value}%
+          const text = `
+          ----Re0最新话----
+          标题：${title}
+          磁力链接：${magnet}
+          `;
 
-          特朗普：
-            得票数：${trump.dataFormatted.count.value}
-            得票率：${trump.dataFormatted.share.value}%
-            普票数：${trump.dataFormatted.votes.value}
-            普票得票率：${trump.dataFormatted.popularVoteShare.value}%
-        -------------------
-        PS：美国总统大选规则：
-          1. 美国总统选举是一种间接选举，选民投票选举各州的选举人，选举人再选举总统；
-          2. 选举人票数超过270即可当选总统。
-      `;
-
-      message.say(result);
+          message.say(text);
+        });
+      } catch (error) {
+        console.error("获取RSS失败:", error);
+        await message.say("接口挂了o(╥﹏╥)o");
+      }
     },
   },
+  // {
+  //   keywords: ["选举", "总统"],
+  //   response: async (message) => {
+  //     const electionData = await axios.get(ELECTION_API);
+
+  //     const electionResult = electionData.data.banners[0].scoreboard;
+
+  //     // 哈里斯
+  //     const harris = electionResult.countSummaries.find((candidate) => candidate.party.code === "DEM");
+  //     // 特朗普
+  //     const trump = electionResult.countSummaries.find((candidate) => candidate.party.code === "REP");
+
+  //     const result = `
+  //     美国总统大选实时数据
+  //       -------------------
+  //         哈里斯：
+  //           得票数：${harris.dataFormatted.count.value}
+  //           得票率：${harris.dataFormatted.share.value}%
+  //           普票数：${harris.dataFormatted.votes.value}
+  //           普票得票率：${harris.dataFormatted.popularVoteShare.value}%
+
+  //         特朗普：
+  //           得票数：${trump.dataFormatted.count.value}
+  //           得票率：${trump.dataFormatted.share.value}%
+  //           普票数：${trump.dataFormatted.votes.value}
+  //           普票得票率：${trump.dataFormatted.popularVoteShare.value}%
+  //       -------------------
+  //       PS：美国总统大选规则：
+  //         1. 美国总统选举是一种间接选举，选民投票选举各州的选举人，选举人再选举总统；
+  //         2. 选举人票数超过270即可当选总统。
+  //     `;
+
+  //     message.say(result);
+  //   },
+  // },
   {
     keywords: ["星期四"],
     response: (message) => {
