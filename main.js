@@ -5,6 +5,7 @@ import leetcodeDaily from "./leetcodeDaily.js";
 import crazyThursday from "./crazyThursday.js";
 import qrcodeTerminal from "qrcode-terminal";
 import xml2js from "xml2js";
+import { getSystemSummary } from "./status.js";
 
 // Ani字幕组RSS
 const ANI_RSS = "https://share.dmhy.org/topics/rss/user_id/747291/rss/rss.xml";
@@ -41,6 +42,13 @@ const triggers = [
         console.error("获取图片失败:", error);
         await message.say("接口挂了o(╥﹏╥)o");
       }
+    },
+  },
+  {
+    keywords: ["状态", "系统"],
+    response: async (message) => {
+      const systemSummary = await getSystemSummary();
+      await message.say(systemSummary);
     },
   },
   {
